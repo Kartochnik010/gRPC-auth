@@ -1,4 +1,4 @@
-env: "dev"
+env: "local"
 storage_path: "./storage/sso.db"
 token_ttl: 5m
 grpc: 
