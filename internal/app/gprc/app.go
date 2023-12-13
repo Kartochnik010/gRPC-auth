@@ -15,9 +15,9 @@ type App struct {
 	port       int
 }
 
-func New(log *slog.Logger, port int) *App {
+func New(log *slog.Logger, port int, auth authgrpc.Auth) *App {
 	srv := grpc.NewServer()
-	authgrpc.RegisterGRPCServer(srv, nil)
+	authgrpc.RegisterGRPCServer(srv, auth)
 	return &App{
 		log:        log,
 		port:       port,
@@ -25,11 +25,17 @@ func New(log *slog.Logger, port int) *App {
 	}
 }
 
+func (a *App) MustRun() {
+	if err := a.Run(); err != nil {
+		panic(err)
+	}
+}
+
 func (a *App) Run() error {
 	const op = "grpcapp.Run"
 	log := a.log.With(slog.String("op", op), slog.Int("port", a.port))
 
-	l, err := net.Listen("tcp", fmt.Sprintf("%v", a.port))
+	l, err := net.Listen("tcp", fmt.Sprintf(":%v", a.port))
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}

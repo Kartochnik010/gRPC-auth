@@ -12,7 +12,7 @@ import (
 )
 
 type Auth interface {
-	Login(ctx context.Context, email string, password string, appId int) (Token string, err error)
+	Login(ctx context.Context, email string, password string, appId int64) (Token string, err error)
 	RegisterNewUser(ctx context.Context, email string, password string) (userId int64, err error)
 	IsAdmin(ctx context.Context, userId int64) (bool, error)
 }
@@ -50,7 +50,7 @@ func (s *serverAPI) Login(ctx context.Context, req *ssov1.LoginRequest) (*ssov1.
 		return nil, err
 	}
 
-	token, err := s.auth.Login(ctx, req.GetEmail(), req.GetPassword(), int(req.GetAppId()))
+	token, err := s.auth.Login(ctx, req.GetEmail(), req.GetPassword(), int64(req.GetAppId()))
 	if err != nil {
 		if errors.Is(err, storage.ErrUserNotFound) {
 			return nil, status.Error(codes.AlreadyExists, "user already exists")
