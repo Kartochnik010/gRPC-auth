@@ -5,15 +5,17 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/golang-migrate/migrate"
+	migrate "github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/sqlite3"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func main() {
 	var storagePath, migrationPath, migrationsTable string
 
-	flag.StringVar(&storagePath, "storage_path", "", "path to storage")
-	flag.StringVar(&migrationPath, "migrations path", "", "path to migrations")
-	flag.StringVar(&migrationsTable, "migration table", "", "specify name of table to migrate to")
+	flag.StringVar(&storagePath, "storage-path", "", "path to storage")
+	flag.StringVar(&migrationPath, "migrations-path", "", "path to migrations")
+	flag.StringVar(&migrationsTable, "migrations-table", "", "specify name of table to migrate to")
 	flag.Parse()
 	if storagePath == "" {
 		panic("Storage path is required")
