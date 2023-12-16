@@ -9,6 +9,7 @@ import (
 
 	"github.com/Kartochnik010/go-sso/internal/domain/models"
 	"github.com/Kartochnik010/go-sso/internal/lib/jwt"
+	"github.com/Kartochnik010/go-sso/internal/lib/logger/sl"
 	"github.com/Kartochnik010/go-sso/internal/storage"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -61,28 +62,28 @@ func (a *Auth) Login(ctx context.Context, email string, password string, appId i
 	user, err := a.userProvider.User(ctx, email)
 	if err != nil {
 		if errors.Is(err, storage.ErrUserNotFound) {
-			log.Warn("user not found", err)
+			log.Warn("user not found", sl.Err(err))
 			return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
 			// return "", fmt.Errorf("%s: %w", op, storage.ErrUserNotFound)
 		}
-		log.Error("failed to get user", err)
+		log.Error("failed to get user", sl.Err(err))
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	if err := bcrypt.CompareHashAndPassword(user.Hash, []byte(password)); err != nil {
-		log.Error("invalid credentials", err)
+		log.Error("invalid credentials", sl.Err(err))
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	app, err := a.appProvider.App(ctx, appId)
 	if err != nil {
-		log.Error("couldn't fint app with id", appId, err)
+		log.Error("couldn't fint app with id", sl.Err(err))
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	token, err := jwt.NewToken(user, app, a.tokenTTL)
 	if err != nil {
-		log.Error("counln't generate token", err)
+		log.Error("counln't generate token", sl.Err(err))
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -100,18 +101,18 @@ func (a *Auth) RegisterNewUser(ctx context.Context, email string, password strin
 
 	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		log.Error("failed to generate password hash", err)
+		log.Error("failed to generate password hash", sl.Err(err))
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
 	id, err := a.userSaver.SaveUser(ctx, email, passHash)
 	if err != nil {
 		if errors.Is(err, storage.ErrUserExists) {
-			log.Warn("user already exists", err)
+			log.Warn("user already exists", sl.Err(err))
 			return 0, fmt.Errorf("%s: %w", op, storage.ErrUserExists)
 		}
 
-		log.Error("failed to save user", err)
+		log.Error("failed to save user", sl.Err(err))
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -128,7 +129,7 @@ func (a *Auth) IsAdmin(ctx context.Context, userId int64) (bool, error) {
 
 	if userId == 0 {
 		a.log.Error("zero value for user_id")
-		return false, fmt.Errorf("%s: %w", op, "zero value for user_id")
+		return false, fmt.Errorf("%s: %s", op, "zero value for user_id")
 	}
 
 	ok, err := a.userProvider.IsAdmin(ctx, userId)
@@ -137,7 +138,7 @@ func (a *Auth) IsAdmin(ctx context.Context, userId int64) (bool, error) {
 			log.Warn("user not found")
 			return false, fmt.Errorf("%s: %w", op, ErrInvalidAppId)
 		}
-		a.log.Error("error from userProvider", err)
+		a.log.Error("error from userProvider", sl.Err(err))
 		return false, fmt.Errorf("%s: %w", op, err)
 	}
 	log.Info("user is admin")
