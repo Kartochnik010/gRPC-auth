@@ -49,6 +49,25 @@ func NewConfig() (*Config, error) {
 	return &cfg, nil
 }
 
+func MustLoadByPath(path string) *Config {
+	if utils.FileNotExists(path) {
+		panic("config file not found. create config file as ./config/config.yml from root directory of the project")
+	}
+	var cfg Config
+	if err := cleanenv.ReadConfig(path, &cfg); err != nil {
+		panic("error parsing config: " + err.Error())
+	}
+	return &cfg
+}
+
+func MustLoad() *Config {
+	path, err := fetchConfigPath()
+	if err != nil {
+		panic("config file not found")
+	}
+	return MustLoadByPath(path)
+}
+
 func fetchConfigPath() (string, error) {
 	var res string
 	flag.StringVar(&res, "config", "./config/config.yml", "path to config file")
