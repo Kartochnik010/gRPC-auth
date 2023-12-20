@@ -4,6 +4,11 @@ help:
 	@echo 'Usage:'
 	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' | sed -e 's/^/ /'
 
+## run: run the project
+.PHONY: run
+run:
+	@go run ./cmd/sso
+
 .PHONY: gen-grpc
 ## gen-grpc: generate go grpc code from protofile
 gen-grpc:
@@ -18,3 +23,8 @@ migrate:
 ## migrate-test: apply test migrations
 migrate-test:
 	@go run ./cmd/migrator --storage-path=./storage/sso.db --migrations-path=./tests/migrations --migrations-table=migrations_test
+
+.PHONY: test
+## test: run tests
+test: 
+	@go test -v ./tests
