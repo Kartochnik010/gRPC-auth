@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/Kartochnik010/go-sso/internal/storage"
+	"github.com/Kartochnik010/go-sso/internal/service/auth"
 	ssov1 "github.com/Kartochnik010/go-sso/protos/gen/go/sso"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -52,8 +52,8 @@ func (s *serverAPI) Login(ctx context.Context, req *ssov1.LoginRequest) (*ssov1.
 
 	token, err := s.auth.Login(ctx, req.GetEmail(), req.GetPassword(), int64(req.GetAppId()))
 	if err != nil {
-		if errors.Is(err, storage.ErrUserNotFound) {
-			return nil, status.Error(codes.AlreadyExists, "user already exists")
+		if errors.Is(err, auth.ErrInvalidCredentials) {
+			return nil, status.Error(codes.InvalidArgument, "invalid email or password")
 		}
 		return nil, status.Error(codes.Internal, "internal error")
 	}
