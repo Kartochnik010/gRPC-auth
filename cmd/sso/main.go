@@ -21,17 +21,26 @@ func main() {
 	}
 
 	log := NewLogger(cfg.Env)
-	log.Info("Application started",
-		slog.String("env", cfg.Env),
-		slog.Any("cfg", cfg),
-	)
 
 	application, err := app.New(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
 	if err != nil {
 		log.Error("failed to init app", sl.Err(err))
 	}
 
-	go application.GRPCServer.MustRun()
+	successfulStart := make(chan struct{}, 1)
+	go func() {
+		if err := application.GRPCServer.Run(); err != nil {
+			log.Error("failed to start gRPC server", sl.Err(err))
+			os.Exit(1)
+		}
+		successfulStart <- struct{}{}
+	}()
+	<-successfulStart
+
+	log.Info("Application started",
+		slog.String("env", cfg.Env),
+		slog.Any("cfg", cfg),
+	)
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)

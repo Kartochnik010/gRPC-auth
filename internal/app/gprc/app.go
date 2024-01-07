@@ -25,12 +25,6 @@ func New(log *slog.Logger, port int, auth authgrpc.Auth) *App {
 	}
 }
 
-func (a *App) MustRun() {
-	if err := a.Run(); err != nil {
-		panic(err)
-	}
-}
-
 func (a *App) Run() error {
 	const op = "grpcapp.Run"
 	log := a.log.With(slog.String("op", op), slog.Int("port", a.port))
