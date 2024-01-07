@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/Kartochnik010/go-sso/internal/config"
-	ssov1 "github.com/Kartochnik010/go-sso/protos/gen/go/sso"
+	ssov1 "github.com/Kartochnik010/protos/gen/go/sso"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

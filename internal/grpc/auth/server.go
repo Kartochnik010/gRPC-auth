@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/Kartochnik010/go-sso/internal/service/auth"
-	ssov1 "github.com/Kartochnik010/go-sso/protos/gen/go/sso"
+	ssov1 "github.com/Kartochnik010/protos/gen/go/sso"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

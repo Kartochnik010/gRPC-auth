@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/Kartochnik010/go-sso/internal/storage"
-	ssov1 "github.com/Kartochnik010/go-sso/protos/gen/go/sso"
 	"github.com/Kartochnik010/go-sso/tests/suite"
+	ssov1 "github.com/Kartochnik010/protos/gen/go/sso"
 	"github.com/brianvoe/gofakeit"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
