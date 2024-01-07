@@ -1,7 +1,7 @@
-# grpc authentication and  autharization service
+# grpc authentication and autharization service
 
 ## About
-В дальшейшем полноценный SSO написанный под руководством Николая Тузова.
+SSO project written in Go. I'm planning to use this auth for my other projects once deployed 
 
 ## Requirements
 
@@ -9,24 +9,24 @@
 
 ## Usage
 
-1. Клонируйте репозиторий:
+1. Clone repo
 ```Bash
    git clone https://github.com/Kartochnik010/gRPC-auth.git
 ```
-2. Перейдите в директорию проекта:
+2. Move into working directory
 ```Bash
     cd gRPC-auth
 ```
-3. Скачайте зависимости:
+3. Tidy dependencies
 ```Go
     go mod tidy
 ```
-4. Запустите приложение:
+4. Run application
 ```Go
     make run
 ```
 
-Все готово! Теперь вы можете увидеть в логах сообщение об успешном запуске проекта
+All set! Now you can see this message in logs - it describes successful start of the application.
 ```Go
 [18:26:26.810] INFO: Application started {
   "cfg": {
@@ -46,7 +46,7 @@
   "port": 44044
 }
 ```
-*Приложение должно падать паникой если требования не были учтены*
+
 
 
 ## Project structure
@@ -89,35 +89,33 @@
 └── utils
 
 ```
-`/cmd/sso` - точка входа в приложение.
+`/cmd/sso` - application entry point
 
-`/cmd/migrator` - код с библиотеки выполняющей миграции. Такой подход избавляет от необходимости скачивать бинарник отдельно.
+`/cmd/migrator` - migrator as a package. This approach removes necessity to download and install migrator binary
 
-`/config` - yaml конфиг для приложения 
+`/config` - dir for yaml configs 
 
-`/internal/app` - пакет для сборки приложения
+`/internal/app` - package for structured application building
 
-`/internal/app/grpc` - пакет для grpc сервера
+`/internal/app/grpc` - grpc server
 
-`/internal/config` - пакет для работы с конфигами
+`/internal/config` - package for handling app configuration
 
-`/internal/domain/models` - пакет, определяющий основные структуры данных.
+`/internal/domain/models` - core data structures
 
-`/internal/grpc/auth` - пакет, реализующий транспортный слой в виде grpc
+`/internal/grpc/auth` - transport layer package via grpc
 
-`/internal/service/auth` - пакет, реализующий сервисный слой
+`/internal/service/auth` - service layer package
 
-`/internal/lib` - сторонние пакеты, импортированные в в проект
+`/internal/lib` - side packages(later will be revomed/reorganised)
 
-`/internal/storage` - пакет, интерфейсы и их реализация работы с данными 
+`/internal/storage` - package for storage handling, storage interfaces
 
-`/migrations` - директория с миграциями используемая мигратором
-
-`/protos` - прото файлик с генерированным кодом
+`/migrations` - dir with migtaion files used by migrator
 
 
 ### Contribute to project
-> feel free to contact me. My socials listed in my profile
+> feel free to contact me. My socials listed in my [profile](https://github.com/kartochnik010).
 ## Todos
 - [ ] Improve error handling
 - [ ] Automate testing with CI (github?)
