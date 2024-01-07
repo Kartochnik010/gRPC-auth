@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"time"
 
 	"log/slog"
@@ -17,10 +18,11 @@ type App struct {
 	TokenTTL    time.Duration
 }
 
-func New(log *slog.Logger, port int, storagePath string, TokenTTL time.Duration) *App {
+func New(log *slog.Logger, port int, storagePath string, TokenTTL time.Duration) (*App, error) {
+	const op = "app.App"
 	storage, err := sqlite.New(storagePath)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	authService := auth.New(log, storage, storage, storage, TokenTTL)
@@ -32,5 +34,5 @@ func New(log *slog.Logger, port int, storagePath string, TokenTTL time.Duration)
 		Port:        port,
 		StoragePath: storagePath,
 		TokenTTL:    TokenTTL,
-	}
+	}, nil
 }

@@ -10,6 +10,7 @@ import (
 
 	"github.com/Kartochnik010/go-sso/internal/app"
 	"github.com/Kartochnik010/go-sso/internal/config"
+	"github.com/Kartochnik010/go-sso/internal/lib/logger/sl"
 	slogpretty "github.com/Kartochnik010/go-sso/internal/lib/logger/slogretty"
 )
 
@@ -20,13 +21,15 @@ func main() {
 	}
 
 	log := NewLogger(cfg.Env)
-	_ = cfg
 	log.Info("Application started",
 		slog.String("env", cfg.Env),
 		slog.Any("cfg", cfg),
 	)
 
-	application := app.New(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
+	application, err := app.New(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
+	if err != nil {
+		log.Error("failed to init app", sl.Err(err))
+	}
 
 	go application.GRPCServer.MustRun()
 
